@@ -6,7 +6,7 @@
 
 如图 
 
-![](./src/assets/WeChata0b4d06b4c5a626e8624f21a3b9122ca.png)
+![](./src/assets/WeChata0b4d06b4c5a626e8624f21a3b9122.png)
 ## Project setup
 ```
 yarn install
