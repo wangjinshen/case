@@ -129,7 +129,9 @@ export default {
       isMousedown: false, // 为true时，才出发mousemove
       scheduleStyle: {},
       dateTime: [],
-      viewDateArr: []
+      viewDateArr: [],
+      oldArr: [],
+      domPoction: null
     };
   },
 
@@ -138,7 +140,6 @@ export default {
     //点击事件
     itemClick(e) {
       e.preventDefault();
-
       let dom = e.target;
       //获取class
       let classListData = Array.from(e.target.classList);
@@ -157,7 +158,6 @@ export default {
     },
     onMousemove(e) {
       e.preventDefault();
-
       const { clientX, clientY } = e;
       if (this.isMousedown) {
         let left = this.left,
@@ -185,35 +185,11 @@ export default {
           left: `${left}px`,
           top: `${top}px`
         };
-        //getBoundingClientRect
-        //节点位置
-
-        let domPoction = this.$refs.Tbody.getBoundingClientRect();
-        let time = document.querySelectorAll(".calendar-time");
-
-        //位置对比
-        Array.from(time).forEach(ele => {
-          let itemPoction = ele.getBoundingClientRect();
-          if (
-            itemPoction.top + 10 - domPoction.top >= 0 &&
-            domPoction.bottom + 10 - itemPoction.bottom >= 0 &&
-            itemPoction.left + 5 - domPoction.left >= 0 &&
-            domPoction.right + 5 - itemPoction.right >= 0
-          ) {
-            //在范围内的节点进行操作
-            let timeId = ele.getAttribute("data-id");
-            ele.classList.add("bg");
-            if (!this.dateTime.includes(timeId)) {
-              this.dateTime.push(timeId);
-            }
-          }
-        });
       }
     },
     // 鼠标按下事件
     onMousedown(e) {
       e.preventDefault();
-
       const { clientX, clientY } = e;
       this.left = e.pageX;
       this.top = e.pageY;
@@ -232,14 +208,38 @@ export default {
     },
     onMouseup(e) {
       e.preventDefault();
-
       this.isMousedown = false;
+      this.oldArr = this.dateTime;
       this.scheduleStyle = {
         width: `0px`,
         height: `0px`,
         display: "none",
         opacity: 0
       };
+      //getBoundingClientRect
+      //节点位置
+      this.domPoction = this.$refs.Tbody.getBoundingClientRect();
+      let time = document.querySelectorAll(".calendar-time");
+      //位置对比
+      Array.from(time).forEach(ele => {
+        let itemPoction = ele.getBoundingClientRect();
+        if (
+          itemPoction.top + 10 - this.domPoction.top >= 0 &&
+          this.domPoction.bottom + 10 - itemPoction.bottom >= 0 &&
+          itemPoction.left + 5 - this.domPoction.left >= 0 &&
+          this.domPoction.right + 5 - itemPoction.right >= 0
+        ) {
+          //在范围内的节点进行操作
+          let timeId = ele.getAttribute("data-id");
+          if (!this.dateTime.includes(timeId)) {
+            ele.classList.add("bg");
+            this.dateTime.push(timeId);
+          } else {
+            ele.classList.remove("bg");
+            this.dateTime = this.dateTime.filter(i => i !== timeId);
+          }
+        }
+      });
     },
     setItemDate(sum) {
       let count = sum / 2;
