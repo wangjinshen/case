@@ -511,8 +511,10 @@ export function screen(key) {
   }
 
 ```
+ 通过watch 来处理下数据处理成我们想要的数据
+ 
 ```vue
-  <script>
+<script>
 import { screen, setItemDate } from '../utils'
 export default {
 //...
