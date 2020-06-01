@@ -4,9 +4,6 @@
       ref="Tbody"
       class="schedule"
       :style="scheduleStyle"
-      @mousemove="onMousemove"
-      @mousedown="onMousedown"
-      @mouseup="onMouseup"
     ></div>
     <table class="calendar-table">
       <thead class="calendar-head">
@@ -37,7 +34,6 @@
         </tr>
         <tr>
           <td>星期二</td>
-
           <td
             class="calendar-time"
             @click="itemClick"
@@ -59,7 +55,6 @@
         </tr>
         <tr>
           <td>星期四</td>
-
           <td
             class="calendar-time"
             @click="itemClick"
@@ -70,7 +65,6 @@
         </tr>
         <tr>
           <td>星期五</td>
-
           <td
             class="calendar-time"
             @click="itemClick"
@@ -81,7 +75,6 @@
         </tr>
         <tr>
           <td>星期六</td>
-
           <td
             class="calendar-time"
             @click="itemClick"
@@ -92,7 +85,6 @@
         </tr>
         <tr>
           <td>星期日</td>
-
           <td
             class="calendar-time"
             @click="itemClick"
@@ -103,26 +95,27 @@
         </tr>
       </tbody>
     </table>
-    <ul>
-      <li v-for="(item, index) in viewDateArr" :key="index">
-        <h2>
-          {{
-          item.title
-          }}
-        </h2>
-        <p>
-          <span v-for="(it, index) in item.arr" :key="index">{{item.arr[index+1]}}</span>
-        </p>
-      </li>
-    </ul>
+      <ul>
+       <li v-for="(item, index) in viewDateArr" :key="index">
+         <h2>
+           {{
+           item.title
+           }}
+         </h2>
+         <p>
+           <span v-for="(it, index) in item.arr" :key="index">{{item.arr[index+1]}}</span>
+         </p>
+       </li>
+     </ul>
   </div>
 </template>
 <script>
+import { screen, setItemDate } from '../utils'
 export default {
   name: "calendar-table",
   data() {
     return {
-      left: 0,
+      left: 0,// 
       top: 0,
       clientX: 0,
       clientY: 0,
@@ -134,8 +127,6 @@ export default {
       domPoction: null
     };
   },
-
-  computed: {},
   methods: {
     //点击事件
     itemClick(e) {
@@ -165,7 +156,6 @@ export default {
           width = 0,
           height = 0;
         //判断滑动方向
-
         width = clientX - this.clientX;
         height = clientY - this.clientY;
         //x轴向左
@@ -190,10 +180,10 @@ export default {
     // 鼠标按下事件
     onMousedown(e) {
       e.preventDefault();
+      this.isMousedown = true;
       const { clientX, clientY } = e;
       this.left = e.pageX;
       this.top = e.pageY;
-      this.isMousedown = true;
       this.clientX = clientX;
       this.clientY = clientY;
       //判断滑动方向
@@ -240,46 +230,6 @@ export default {
           }
         }
       });
-    },
-    setItemDate(sum) {
-      let count = sum / 2;
-      let mCount = Math.ceil(count);
-      if (sum % 2 == 0) {
-        return `${count - 1}:30~${count}:00    `;
-      } else {
-        return `${mCount - 1}:00~${mCount - 1}:30   `;
-      }
-    },
-    screen(key) {
-      switch (key) {
-        case "1":
-          return "星期一";
-          break;
-        case "2":
-          return "星期二";
-          break;
-        case "3":
-          return "星期三";
-          break;
-
-        case "4":
-          return "星期四";
-          break;
-
-        case "5":
-          return "星期五";
-          break;
-
-        case "6":
-          return "星期六";
-          break;
-        case "7":
-          return "星期日";
-          break;
-        default:
-          return "";
-          break;
-      }
     }
   },
   //监听
@@ -289,23 +239,23 @@ export default {
       let viewDateArr = [];
       val.map(e => {
         let arr = e.split(",");
-        if (!viewDate.hasOwnProperty(this.screen(arr[0]))) {
-          viewDate[this.screen(arr[0])] = [arr[0], this.setItemDate(arr[1])];
+        if (!viewDate.hasOwnProperty(screen(arr[0]))) {
+          viewDate[screen(arr[0])] = [arr[0], setItemDate(arr[1])];
         } else {
           if (
-            !viewDate[this.screen(arr[0])].includes(this.setItemDate(arr[1]))
+            !viewDate[screen(arr[0])].includes(setItemDate(arr[1]))
           ) {
-            viewDate[this.screen(arr[0])].push(this.setItemDate(arr[1]));
+            viewDate[screen(arr[0])].push(setItemDate(arr[1]));
           }
         }
       });
       let dataArr = Object.keys(viewDate)
-        .map(k => viewDate[k])
-        .sort((a, b) => Number(a[0]) - Number(b[0]));
+          .map(k => viewDate[k])
+          .sort((a, b) => Number(a[0]) - Number(b[0]));
 
       dataArr.forEach(ele => {
         viewDateArr.push({
-          title: this.screen(ele[0]),
+          title: screen(ele[0]),
           arr: ele
         });
       });
@@ -321,16 +271,14 @@ export default {
   margin: 0;
   padding: 0;
 }
-
 table {
   border-spacing: 0;
 }
-
 .calendar {
   background-color: #fff;
   position: relative;
+  margin-top :10px;
   display: inline-block;
-
   .schedule {
     position: fixed;
     width: 0;
@@ -340,28 +288,22 @@ table {
     display: block;
     background: #2F88FF;
     pointer-events: none;
-    transition: all 400ms ease;
   }
-
   .calendar-table {
     border-collapse: collapse;
     border-radius: 4px;
-
     tr, td, th {
       border: 1px solid #E4E9ED;
       font-size: 12px;
       text-align: center;
       min-width: 11px;
       height: 21px;
-      transition: background 200ms ease;
     }
-
     thead {
       th, td {
         background: #F8F9FA;
       }
     }
-
     .calendar-body {
       tr {
         td {
@@ -393,6 +335,6 @@ th::selection {
 }
 
 .bg {
-  background: red;
+  background: #2f88ff;
 }
 </style>
