@@ -1,10 +1,6 @@
 <template>
   <div class="calendar">
-    <div
-      ref="Tbody"
-      class="schedule"
-      :style="scheduleStyle"
-    ></div>
+    <div ref="Tbody" class="schedule" :style="scheduleStyle"></div>
     <table class="calendar-table">
       <thead class="calendar-head">
         <tr>
@@ -94,28 +90,41 @@
           ></td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="49">
+            <div class="calendar-foot">
+              <div class="calendar-foot-left">
+                <span class="none-action">未选</span>
+                <span class="action">已选</span>
+              </div>
+              <span class="clear" @click="clearData">清空选择</span>
+            </div>
+          </th>
+        </tr>
+      </tfoot>
     </table>
-      <ul>
-       <li v-for="(item, index) in viewDateArr" :key="index">
-         <h2>
-           {{
-           item.title
-           }}
-         </h2>
-         <p>
-           <span v-for="(it, index) in item.arr" :key="index">{{item.arr[index+1]}}</span>
-         </p>
-       </li>
-     </ul>
+    <ul>
+      <li v-for="(item, index) in viewDateArr" :key="index">
+        <h2>
+          {{
+          item.title
+          }}
+        </h2>
+        <p>
+          <span v-for="(it, index) in item.arr" :key="index">{{item.arr[index+1]}}</span>
+        </p>
+      </li>
+    </ul>
   </div>
 </template>
 <script>
-import { screen, setItemDate } from '../utils'
+import { screen, setItemDate } from "../utils";
 export default {
   name: "calendar-table",
   data() {
     return {
-      left: 0,// 
+      left: 0, //
       top: 0,
       clientX: 0,
       clientY: 0,
@@ -128,6 +137,14 @@ export default {
     };
   },
   methods: {
+    clearData() {
+      let time = document.querySelectorAll(".calendar-time");
+      Array.from(time).forEach(ele => {
+        let timeId = ele.getAttribute("data-id");
+        ele.classList.remove("bg");
+        this.dateTime = this.dateTime.filter(i => i !== timeId);
+      });
+    },
     //点击事件
     itemClick(e) {
       e.preventDefault();
@@ -242,16 +259,14 @@ export default {
         if (!viewDate.hasOwnProperty(screen(arr[0]))) {
           viewDate[screen(arr[0])] = [arr[0], setItemDate(arr[1])];
         } else {
-          if (
-            !viewDate[screen(arr[0])].includes(setItemDate(arr[1]))
-          ) {
+          if (!viewDate[screen(arr[0])].includes(setItemDate(arr[1]))) {
             viewDate[screen(arr[0])].push(setItemDate(arr[1]));
           }
         }
       });
       let dataArr = Object.keys(viewDate)
-          .map(k => viewDate[k])
-          .sort((a, b) => Number(a[0]) - Number(b[0]));
+        .map(k => viewDate[k])
+        .sort((a, b) => Number(a[0]) - Number(b[0]));
 
       dataArr.forEach(ele => {
         viewDateArr.push({
@@ -260,6 +275,7 @@ export default {
         });
       });
       this.viewDateArr = viewDateArr;
+      this.$emit("caseData", viewDateArr);
     }
   }
 };
@@ -271,14 +287,17 @@ export default {
   margin: 0;
   padding: 0;
 }
+
 table {
   border-spacing: 0;
 }
+
 .calendar {
   background-color: #fff;
   position: relative;
-  margin-top :10px;
+  margin-top: 10px;
   display: inline-block;
+
   .schedule {
     position: fixed;
     width: 0;
@@ -289,9 +308,11 @@ table {
     background: #2F88FF;
     pointer-events: none;
   }
+
   .calendar-table {
     border-collapse: collapse;
     border-radius: 4px;
+
     tr, td, th {
       border: 1px solid #E4E9ED;
       font-size: 12px;
@@ -299,11 +320,13 @@ table {
       min-width: 11px;
       height: 21px;
     }
+
     thead {
       th, td {
         background: #F8F9FA;
       }
     }
+
     .calendar-body {
       tr {
         td {
@@ -324,6 +347,53 @@ table {
       }
     }
   }
+
+  .calendar-foot {
+    width: 100%;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 10px 10px 0;
+
+    .calendar-foot-left {
+      span {
+        margin-left: 20px;
+        position: relative;
+      }
+
+      .action {
+        &::after {
+          position: absolute;
+          content: '';
+          display: block;
+          width: 10px;
+          height: 20px;
+          background: #2f88ff;
+          top: 0;
+          left: -14px;
+          border: 1px solid #E4E9ED;
+        }
+      }
+
+      .none-action {
+        &::after {
+          position: absolute;
+          content: '';
+          display: block;
+          width: 10px;
+          height: 20px;
+          background: #fff;
+          top: 0;
+          left: -14px;
+          border: 1px solid #E4E9ED;
+        }
+      }
+    }
+
+    .clear {
+      color: #2f88ff;
+    }
+  }
 }
 
 td::selection {
@@ -336,5 +406,6 @@ th::selection {
 
 .bg {
   background: #2f88ff;
+  cursor: pointer;
 }
 </style>

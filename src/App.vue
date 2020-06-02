@@ -1,15 +1,20 @@
 <template>
   <div id="app">
     <div class="warp">
-      <About></About>
+      <Case @caseData="oncaseData"></Case>
     </div>
   </div>
 </template>
 <script>
-import About from "./views/About";
+import Case from "./views/case";
 export default {
   components: {
-    About
+    Case
+  },
+  methods: {
+    oncaseData (data) {
+      console.log(data);
+    }
   }
 };
 </script>
