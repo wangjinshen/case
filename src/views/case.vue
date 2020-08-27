@@ -104,7 +104,7 @@
         </tr>
       </tfoot>
     </table>
-    <ul>
+    <!-- <ul>
       <li v-for="(item, index) in viewDateArr" :key="index">
         <h2>
           {{
@@ -115,7 +115,7 @@
           <span v-for="(it, index) in item.arr" :key="index">{{item.arr[index+1]}}</span>
         </p>
       </li>
-    </ul>
+    </ul> -->
   </div>
 </template>
 <script>

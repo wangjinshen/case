@@ -2,14 +2,18 @@
   <div id="app">
     <div class="warp">
       <Case @caseData="oncaseData"></Case>
+      <Glide></Glide>
     </div>
   </div>
 </template>
 <script>
 import Case from "./views/case";
+import Glide from "./views/glide";
+
 export default {
   components: {
-    Case
+    Case,
+    Glide
   },
   methods: {
     oncaseData (data) {
