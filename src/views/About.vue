@@ -165,7 +165,6 @@ export default {
           width = 0,
           height = 0;
         //判断滑动方向
-
         width = clientX - this.clientX;
         height = clientY - this.clientY;
         //x轴向左
